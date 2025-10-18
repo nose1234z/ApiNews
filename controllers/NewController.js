@@ -66,6 +66,8 @@ const create = (request, response) => {
     }
 
     request.body.usuario_id = request.user.usuario.id;
+    request.body.UserAlta = request.user.usuario.nick;
+    request.body.FechaAlta = new Date();
 
     New.create(request.body).then(
         newEntitie => {
