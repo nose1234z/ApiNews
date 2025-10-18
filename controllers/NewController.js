@@ -1,4 +1,4 @@
-const { New } = require('../models/NewModel')
+const { News } = require('../models/NewModel')
 const { Category } = require('../models/CategoryModel')
 const { State } = require('../models/StateModel')
 const { User } = require('../models/UserModel')
@@ -27,7 +27,7 @@ const get = (request, response) => {
         filters.activo = activo
     }
 
-    New.findAll({
+    News.findAll({
         where: filters,
         include: relations
     })
@@ -42,7 +42,7 @@ const get = (request, response) => {
 
 const getById = (request, response) => {
     const id = request.params.id;
-    New.findByPk(id, {
+    News.findByPk(id, {
         include: relations
     })
 
@@ -68,8 +68,12 @@ const create = (request, response) => {
     request.body.usuario_id = request.user.usuario.id;
     request.body.UserAlta = request.user.usuario.nick;
     request.body.FechaAlta = new Date();
+    request.body.UserMod = "";
+    request.body.FechaMod = "1990-01-01T00:00:00.000Z";
+    request.body.UserBaja = "";
+    request.body.FechaBaja = "1990-01-01T00:00:00.000Z";
 
-    New.create(request.body).then(
+    News.create(request.body).then(
         newEntitie => {
             response.status(201).json(newEntitie)
         }
@@ -86,7 +90,7 @@ const update = (request, response) => {
         return response.status(422).json({ errors: errors.mapped() });
     }
     const id = request.params.id;
-    New.update(
+    News.update(
         request.body
         , {
             where: {
@@ -104,7 +108,7 @@ const update = (request, response) => {
 
 const destroy = (request, response) => {
     const id = request.params.id;
-    New.destroy({
+    News.destroy({
         where: {
             id: id
         }
