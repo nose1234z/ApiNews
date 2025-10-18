@@ -14,15 +14,7 @@ const validatorNewCreate = [
                 });
         }),
 
-    check('usuario_id').notEmpty().withMessage('El campo usuario_id es obligatorio').isInt().withMessage('El campo usuario_id debe ser un numero entero')
-        .custom((value, { request }) => {
-            return User.findOne({ where: { id: value, activo: true } })
-                .then((user) => {
-                    if (!user) {
-                        throw new Error('No existe una usuario con ese id');
-                    }
-                });
-        }),
+    
 
     check('estado_id').notEmpty().withMessage('El campo estado_id es obligatorio').isInt().withMessage('El campo estado_id debe ser un numero entero')
         .custom((value, { request }) => {
@@ -51,15 +43,7 @@ const validatorNewUpdate = [
                     }
                 });
         }),
-    check('usuario_id').optional().isInt().withMessage('El campo usuario_id debe ser un numero entero')
-        .custom((value, { request }) => {
-            return User.findOne({ where: { id: value, activo: true } })
-                .then((user) => {
-                    if (!user) {
-                        throw new Error('No existe una usuario con ese id');
-                    }
-                });
-        }),
+    
     check('estado_id').optional().isInt().withMessage('El campo estado_id debe ser un numero entero')
         .custom((value, { request }) => {
             return State.findOne({ where: { id: value, activo: true } })
