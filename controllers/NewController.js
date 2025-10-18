@@ -68,6 +68,7 @@ const create = (request, response) => {
     request.body.usuario_id = request.user.usuario.id;
     request.body.UserAlta = request.user.usuario.nick;
     request.body.FechaAlta = new Date();
+    request.body.fecha_publicacion = new Date();
     request.body.UserMod = "";
     request.body.FechaMod = "1990-01-01T00:00:00.000Z";
     request.body.UserBaja = "";
