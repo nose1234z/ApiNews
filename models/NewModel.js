@@ -4,7 +4,7 @@ const { Category } = require('./CategoryModel');
 const { State } = require('./StateModel');
 const { User } = require('./UserModel');
 
-const New = connection.define('News', {
+const News = connection.define('News', {
     categoria_id: {
         type: DataTypes.INTEGER,
         allowNull: false
@@ -70,8 +70,8 @@ const New = connection.define('News', {
     },
 })
 
-New.belongsTo(Category, { as: 'categoria', foreignKey: 'categoria_id' })
-New.belongsTo(State, { as: 'estado', foreignKey: 'estado_id' })
-New.belongsTo(User, { as: 'usuario', foreignKey: 'usuario_id' })
+News.belongsTo(Category, { as: 'categoria', foreignKey: 'categoria_id' })
+News.belongsTo(State, { as: 'estado', foreignKey: 'estado_id' })
+News.belongsTo(User, { as: 'usuario', foreignKey: 'usuario_id' })
 
 module.exports = { News };
