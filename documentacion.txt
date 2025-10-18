@@ -1,0 +1,187 @@
+# Documentación de la API de Noticias
+
+## 1. Introducción
+
+Esta documentación detalla la arquitectura, funcionalidad y uso de la API de Noticias. La API ha sido desarrollada para servir como un backend robusto para una aplicación de noticias, permitiendo la gestión de usuarios, categorías, noticias y perfiles. Ofrece un sistema de autenticación basado en tokens (JWT) y roles para controlar el acceso a las diferentes funcionalidades.
+
+El objetivo de este documento es proporcionar una guía completa para desarrolladores que necesiten entender, mantener o extender la funcionalidad de la API.
+
+### [IMAGEN: Inserte aquí un banner o logo del proyecto]
+
+---
+
+## 2. Tecnologías Utilizadas
+
+La API está construida sobre un stack de tecnologías modernas de JavaScript, seleccionadas por su rendimiento, escalabilidad y ecosistema.
+
+*   **Node.js**: Entorno de ejecución de JavaScript del lado del servidor.
+*   **Express.js**: Framework web para Node.js, utilizado para construir la estructura de la API y gestionar las rutas y peticiones HTTP.
+*   **Sequelize**: ORM (Object-Relational Mapper) para Node.js, que facilita la interacción con la base de datos relacional. Permite definir modelos de datos como objetos de JavaScript y gestiona las consultas de manera segura.
+*   **MySQL**: Sistema de gestión de bases de datos relacional donde se almacenan todos los datos de la aplicación.
+*   **JSON Web Tokens (JWT)**: Estándar abierto para la creación de tokens de acceso que permiten una autenticación segura y sin estado entre el cliente y el servidor.
+*   **bcrypt.js**: Librería para el hasheo de contraseñas, fundamental para almacenar las credenciales de los usuarios de forma segura.
+*   **CORS**: Middleware para habilitar el Cross-Origin Resource Sharing, permitiendo que la API sea consumida por clientes desde diferentes dominios.
+*   **Dotenv**: Módulo para cargar variables de entorno desde un archivo `.env`, separando la configuración del código fuente.
+
+---
+
+## 3. Estructura del Proyecto
+
+El proyecto sigue una arquitectura modular y organizada para facilitar la mantenibilidad y escalabilidad del código.
+
+### [IMAGEN: Inserte aquí un diagrama de la arquitectura del proyecto]
+
+A continuación, se describe cada uno de los directorios principales:
+
+*   **`/config`**: Contiene los archivos de configuración de la aplicación.
+    *   `database.js`: Configura la conexión a la base de datos utilizando Sequelize y las variables de entorno.
+    *   `swagger.js`: (No implementado en el código final, pero presente en la estructura) Podría contener la configuración para la documentación automática de la API con Swagger.
+
+*   **`/controllers`**: Contiene la lógica de negocio de la aplicación. Cada controlador es responsable de manejar las solicitudes entrantes, interactuar con los modelos y enviar una respuesta al cliente.
+    *   `AuthController.js`, `UserController.js`, `NewController.js`, etc.
+
+*   **`/middlewares`**: Contiene los middlewares de Express que se ejecutan antes de que la solicitud llegue al controlador.
+    *   `auth.middleware.js`: Verifica la validez del token JWT en las rutas protegidas.
+    *   `role.middleware.js`: Verifica si el usuario autenticado tiene el rol necesario para acceder a un recurso específico.
+    *   `jwt.js`: Contiene las funciones para firmar y verificar los tokens JWT.
+
+*   **`/models`**: Define los modelos de datos de la aplicación utilizando Sequelize. Cada modelo representa una tabla en la base de datos.
+    *   `UserModel.js`, `NewModel.js`, `CategoryModel.js`, etc.
+
+*   **`/routes`**: Define las rutas (endpoints) de la API. Cada archivo de ruta agrupa los endpoints relacionados con un recurso específico y los asocia con los métodos del controlador correspondiente.
+    *   `UserRoute.js`, `NewRoute.js`, `AuthRoute.js`, etc.
+
+*   **`/validators`**: Contiene los validadores de datos para las solicitudes entrantes. Se utilizan para asegurar que los datos enviados por el cliente (por ejemplo, en el cuerpo de una solicitud POST) cumplan con el formato y las reglas requeridas antes de ser procesados por el controlador.
+    *   `UserValidator.js`, `NewValidator.js`, etc.
+
+*   **`index.js`**: Es el punto de entrada de la aplicación. Aquí se inicializa el servidor Express, se configuran los middlewares globales (como CORS y el límite de JSON), se montan las rutas y se inicia el servidor para que escuche en el puerto configurado.
+
+*   **`config.js`**: Archivo que centraliza la configuración obtenida de las variables de entorno, como el puerto y las credenciales de la base de datos.
+
+---
+
+## 4. Instalación y Configuración
+
+Para ejecutar la API en un entorno de desarrollo local, sigue estos pasos:
+
+1.  **Clonar el repositorio**: `git clone <URL_DEL_REPOSITORIO>`
+2.  **Instalar dependencias**: Navega a la raíz del proyecto y ejecuta el siguiente comando para instalar todas las librerías necesarias definidas en el `package.json`.
+    ```bash
+    npm install
+    ```
+3.  **Configurar variables de entorno**: Crea un archivo `.env` en la raíz del proyecto. Este archivo contendrá las variables de configuración sensibles que no deben ser subidas al control de versiones.
+    
+    Copia y pega el siguiente contenido en tu archivo `.env` y ajústalo a tu configuración local:
+    ```
+    # Puerto de la aplicación
+    PORT=3000
+
+    # Configuración de la Base de Datos
+    DB_HOST=localhost
+    DB_USER=root
+    DB_PASSWORD=tu_contraseña_de_mysql
+    DB_NAME=db_news
+
+    # Clave secreta para firmar los JWT
+    JWT_SECRET=tu_clave_secreta_aqui
+    ```
+    ### [IMAGEN: Inserte aquí una captura de pantalla del archivo .env]
+
+4.  **Crear la base de datos**: Asegúrate de que tu servidor de MySQL esté en funcionamiento y crea una base de datos con el nombre que especificaste en la variable `DB_NAME`.
+
+5.  **Ejecutar la aplicación**: Una vez completada la configuración, puedes iniciar el servidor con el siguiente comando:
+    ```bash
+    npm start
+    ```
+    o
+    ```bash
+    node index.js
+    ```
+    Si todo ha ido bien, deberías ver un mensaje en la consola indicando que el servidor está escuchando en el puerto 3000.
+
+---
+
+## 5. Endpoints de la API
+
+La API expone varios endpoints para gestionar los diferentes recursos. Todas las rutas están prefijadas con `/api`.
+
+### [IMAGEN: Inserte aquí una captura de Postman o similar mostrando una petición a un endpoint]
+
+A continuación se detallan los principales grupos de rutas:
+
+**Autenticación (`/api/login`)**
+*   `POST /login`: Autentica a un usuario y devuelve un token JWT.
+    *   **Request Body**: `{ "email": "user@example.com", "password": "password123" }`
+    *   **Response**: `{ "token": "ey..." }`
+
+**Usuarios (`/api/users`)**
+*   `GET /users`: Obtiene una lista de todos los usuarios (requiere rol de administrador).
+*   `GET /users/:id`: Obtiene un usuario por su ID.
+*   `POST /users`: Crea un nuevo usuario.
+*   `PUT /users/:id`: Actualiza un usuario existente.
+*   `DELETE /users/:id`: Elimina un usuario.
+
+**Noticias (`/api/news`)**
+*   `GET /news`: Obtiene una lista de todas las noticias.
+*   `GET /news/:id`: Obtiene una noticia por su ID.
+*   `POST /news`: Crea una nueva noticia.
+*   `PUT /news/:id`: Actualiza una noticia existente.
+*   `DELETE /news/:id`: Elimina una noticia.
+
+**Categorías (`/api/categories`)**
+*   `GET /categories`: Obtiene una lista de todas las categorías.
+*   `POST /categories`: Crea una nueva categoría.
+*   `PUT /categories/:id`: Actualiza una categoría.
+*   `DELETE /categories/:id`: Elimina una categoría.
+
+**(Se pueden añadir aquí el resto de rutas como `Profiles` y `States` siguiendo el mismo formato)**
+
+---
+
+## 6. Autenticación y Autorización
+
+La seguridad de la API se gestiona mediante JSON Web Tokens (JWT).
+
+**Flujo de Autenticación:**
+1.  El cliente envía las credenciales (email y contraseña) al endpoint `POST /api/login`.
+2.  El servidor verifica las credenciales contra la base de datos.
+3.  Si las credenciales son válidas, el servidor genera un token JWT firmado con una clave secreta (`JWT_SECRET`).
+4.  El servidor envía el token JWT de vuelta al cliente.
+5.  El cliente debe almacenar este token y enviarlo en la cabecera `Authorization` de cada solicitud a las rutas protegidas, con el formato `Bearer <token>`.
+
+### [IMAGEN: Inserte aquí un diagrama del flujo de autenticación]
+
+**Autorización (Roles):**
+Algunos endpoints requieren roles específicos (por ejemplo, "admin"). El middleware `role.middleware.js` se encarga de decodificar el token en cada solicitud, extraer el rol del usuario y verificar si tiene permiso para acceder al recurso solicitado. Si el usuario no tiene el rol adecuado, la API devuelve un error `403 Forbidden`.
+
+---
+
+## 7. Sección de Imágenes para la Documentación
+
+Esta sección está reservada para que puedas añadir las imágenes que ilustren los puntos clave de la documentación. A continuación se listan los marcadores de imagen utilizados a lo largo del documento para que los reemplaces con tus archivos de imagen.
+
+*   **[IMAGEN: Inserte aquí un banner o logo del proyecto]**
+    *   Ubicación: Sección 1. Introducción.
+    *   Sugerencia: Una imagen representativa de la API o del proyecto.
+
+*   **[IMAGEN: Inserte aquí un diagrama de la arquitectura del proyecto]**
+    *   Ubicación: Sección 3. Estructura del Proyecto.
+    *   Sugerencia: Un diagrama de flujo o de bloques que muestre cómo interactúan los componentes (rutas, controladores, modelos, base de datos).
+
+*   **[IMAGEN: Inserte aquí una captura de pantalla del archivo .env]**
+    *   Ubicación: Sección 4. Instalación y Configuración.
+    *   Sugerencia: Una captura de tu editor de código mostrando el archivo `.env` con las variables de ejemplo.
+
+*   **[IMAGEN: Inserte aquí una captura de Postman o similar mostrando una petición a un endpoint]**
+    *   Ubicación: Sección 5. Endpoints de la API.
+    *   Sugerencia: Una captura de pantalla de una herramienta como Postman o Insomnia realizando una solicitud `GET` a `/api/news` y mostrando la respuesta JSON.
+
+*   **[IMAGEN: Inserte aquí un diagrama del flujo de autenticación]**
+    *   Ubicación: Sección 6. Autenticación y Autorización.
+    *   Sugerencia: Un diagrama de secuencia que muestre el intercambio de mensajes entre el cliente y el servidor durante el proceso de login y una solicitud a una ruta protegida.
+
+---
+
+## 8. Conclusión
+
+Esta API proporciona una base sólida y escalable para una aplicación de noticias. Su arquitectura modular, el uso de un ORM como Sequelize y un sistema de autenticación robusto la preparan para futuras expansiones y para su despliegue en un entorno de producción.
