@@ -68,7 +68,9 @@ const News = connection.define('News', {
         allowNull: false,
         defaultValue:'1990-01-01T00:00:00.000Z'
     },
-})
+}, {
+    tableName: 'news'
+});
 
 News.belongsTo(Category, { as: 'categoria', foreignKey: 'categoria_id' })
 News.belongsTo(State, { as: 'estado', foreignKey: 'estado_id' })
