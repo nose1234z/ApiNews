@@ -80,7 +80,7 @@ const create = (request, response) => {
     )
         .catch(err => {
             console.log(err)
-            response.status(500).send('Error al crear');
+            response.status(500).json({ message: 'Error al crear la noticia', error: err });
         })
 }
 
