@@ -7,7 +7,7 @@ const connection = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
     dialect: 'mysql',
     dialectOptions: {
         ssl: {
-            rejectUnauthorized: true
+            rejectUnauthorized: false
         }
     }
 })
