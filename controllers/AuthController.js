@@ -41,7 +41,7 @@ const login = (request, response) => {
                     nick: usuario.nick
                 };
 
-                const token = jwt.sign({ usuario: userDataForToken }, 'mi_llave_secreta', { expiresIn: '24h' });
+                const token = jwt.sign({ usuario: userDataForToken }, process.env.JWT_SECRET, { expiresIn: '24h' });
                 response.status(200).json({ message: "Login con éxito", token: token });
             } else {
                 // Si las contraseñas no coinciden

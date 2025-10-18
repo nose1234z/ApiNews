@@ -64,6 +64,9 @@ const create = (request, response) => {
     if (!errors.isEmpty()) {
         return response.status(422).json({ errors: errors.mapped() });
     }
+
+    request.body.usuario_id = request.user.usuario.id;
+
     New.create(request.body).then(
         newEntitie => {
             response.status(201).json(newEntitie)
